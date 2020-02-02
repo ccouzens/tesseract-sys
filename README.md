@@ -29,7 +29,6 @@ pkg install libclang leptonica-dev tesseract-dev
 On Windows, this library uses Microsoft's [vcpkg](https://github.com/microsoft/vcpkg) to provide tesseract.
 
 Please install [vcpkg](https://github.com/microsoft/vcpkg) and **set up user wide integration** or [vcpkg crate](https://crates.io/crates/vcpkg) won't be able to find a library.
-By default vcpkg installs 32 bit libraries. If you need 64 bit libraries then set following environment variable
 
 To install tesseract
 
