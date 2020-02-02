@@ -7,7 +7,7 @@ use vcpkg;
 
 #[cfg(windows)]
 fn find_tesseract_system_lib() -> Option<String> {
-    let lib = vcpkg::Config::new().find_package("leptonica").unwrap();
+    let lib = vcpkg::Config::new().find_package("tesseract").unwrap();
 
     let include = lib
         .include_paths
