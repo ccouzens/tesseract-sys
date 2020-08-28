@@ -62,7 +62,7 @@ fn main() {
         public_types_bindings =
             public_types_bindings.clang_arg(format!("-I{}", clang_extra_include));
     }
-    
+
     let public_types_bindings = public_types_bindings
         .generate()
         .expect("Unable to generate public types bindings");
