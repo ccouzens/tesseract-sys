@@ -1,6 +1,6 @@
 [package]
 name = "tesseract-sys"
-version = "0.5.4"
+version = "0.5.5"
 authors = ["Kevin Kwok <antimatter15@gmail.com>", "Chris Couzens <ccouzens@gmail.com>"]
 description = "Rust Bindings for Tesseract OCR"
 license = "MIT"
@@ -15,6 +15,6 @@ build = "build.rs"
 leptonica-sys = "~0.3"
 
 [build-dependencies]
-bindgen = "0.55"
+bindgen = "0.56"
 [target.'cfg(windows)'.build-dependencies]
 vcpkg = "0.2.8"
