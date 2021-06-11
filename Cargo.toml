@@ -12,7 +12,7 @@ links = "tesseract"
 build = "build.rs"
 
 [dependencies]
-leptonica-sys = "~0.3.5"
+leptonica-sys = { git = "https://github.com/vim-zz/leptonica-sys", branch = "fix_macos" }
 
 [build-dependencies]
 bindgen = "0.56"
