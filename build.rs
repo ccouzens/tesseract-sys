@@ -1,11 +1,11 @@
 extern crate bindgen;
 
+#[cfg(target_os = "macos")]
+use pkg_config;
 use std::env;
 use std::path::PathBuf;
 #[cfg(windows)]
 use vcpkg;
-#[cfg(target_os="macos")]
-use pkg_config;
 
 #[cfg(windows)]
 fn find_tesseract_system_lib() -> Option<Vec<String>> {
@@ -20,17 +20,16 @@ fn find_tesseract_system_lib() -> Option<Vec<String>> {
 }
 
 // On macOS, we sometimes need additional search paths, which we get using pkg-config
-#[cfg(target_os="macos")]
+#[cfg(target_os = "macos")]
 fn find_tesseract_system_lib() -> Option<Vec<String>> {
-    let pk = pkg_config::Config::new()
-        .probe("tesseract")
-        .unwrap();
+    let pk = pkg_config::Config::new().probe("tesseract").unwrap();
     // Tell cargo to tell rustc to link the system proj shared library.
     println!("cargo:rustc-link-search=native={:?}", pk.link_paths[0]);
     println!("cargo:rustc-link-lib=tesseract");
 
     let mut include_paths = pk.include_paths.clone();
-    let include = include_paths.iter_mut()
+    let include = include_paths
+        .iter_mut()
         .map(|x| {
             if !x.ends_with("include") {
                 x.pop();
@@ -44,7 +43,7 @@ fn find_tesseract_system_lib() -> Option<Vec<String>> {
     Some(include)
 }
 
-#[cfg(all(not(windows), not(target_os="macos")))]
+#[cfg(all(not(windows), not(target_os = "macos")))]
 fn find_tesseract_system_lib() -> Option<Vec<String>> {
     println!("cargo:rustc-link-lib=tesseract");
     None
@@ -76,7 +75,7 @@ fn main() {
             capi_bindings = capi_bindings.clang_arg(format!("-I{}", *inc));
         }
     }
-    
+
     // Finish the builder and generate the bindings.
     let capi_bindings = capi_bindings
         .generate()
