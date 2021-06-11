@@ -12,7 +12,6 @@ mod tests {
     use super::*;
     use leptonica_sys::{pixFreeData, pixRead};
     use std::ffi::CStr;
-    use std::ffi::CString;
     use std::ptr;
     use std::str;
 
@@ -20,8 +19,12 @@ mod tests {
     fn ocr() {
         unsafe {
             let cube = TessBaseAPICreate();
-            TessBaseAPIInit3(cube, ptr::null(), CString::new("eng").unwrap().as_ptr());
-            let image = pixRead(CString::new("img.png").unwrap().as_ptr());
+            TessBaseAPIInit3(
+                cube,
+                ptr::null(),
+                CStr::from_bytes_with_nul_unchecked(b"eng\0").as_ptr(),
+            );
+            let image = pixRead(CStr::from_bytes_with_nul_unchecked(b"img.png\0").as_ptr());
             TessBaseAPISetImage2(cube, image);
             TessBaseAPIRecognize(cube, ptr::null_mut());
             assert_eq!(
