@@ -8,27 +8,25 @@ use std::path::PathBuf;
 use vcpkg;
 
 #[cfg(windows)]
-fn find_tesseract_system_lib() -> Option<Vec<String>> {
+fn find_tesseract_system_lib() -> Vec<String> {
     let lib = vcpkg::Config::new().find_package("tesseract").unwrap();
 
-    let include = lib
-        .include_paths
+    lib.include_paths
         .iter()
         .map(|x| x.to_string_lossy())
-        .collect::<Vec<String>>();
-    Some(include)
+        .collect::<Vec<String>>()
 }
 
 // On macOS, we sometimes need additional search paths, which we get using pkg-config
 #[cfg(target_os = "macos")]
-fn find_tesseract_system_lib() -> Option<Vec<String>> {
+fn find_tesseract_system_lib() -> Vec<String> {
     let pk = pkg_config::Config::new().probe("tesseract").unwrap();
     // Tell cargo to tell rustc to link the system proj shared library.
     println!("cargo:rustc-link-search=native={:?}", pk.link_paths[0]);
     println!("cargo:rustc-link-lib=tesseract");
 
     let mut include_paths = pk.include_paths.clone();
-    let include = include_paths
+    include_paths
         .iter_mut()
         .map(|x| {
             if !x.ends_with("include") {
@@ -38,15 +36,13 @@ fn find_tesseract_system_lib() -> Option<Vec<String>> {
         })
         .map(|x| x.to_string_lossy())
         .map(|x| x.to_string())
-        .collect::<Vec<String>>();
-
-    Some(include)
+        .collect::<Vec<String>>()
 }
 
 #[cfg(all(not(windows), not(target_os = "macos")))]
-fn find_tesseract_system_lib() -> Option<Vec<String>> {
+fn find_tesseract_system_lib() -> Vec<String> {
     println!("cargo:rustc-link-lib=tesseract");
-    None
+    vec![]
 }
 
 fn main() {
@@ -70,10 +66,8 @@ fn main() {
         .blacklist_type("_IO_marker")
         .blacklist_type("_IO_wide_data");
 
-    if let Some(clang_extra_include) = &clang_extra_include {
-        for inc in clang_extra_include {
-            capi_bindings = capi_bindings.clang_arg(format!("-I{}", *inc));
-        }
+    for inc in &clang_extra_include {
+        capi_bindings = capi_bindings.clang_arg(format!("-I{}", *inc));
     }
 
     // Finish the builder and generate the bindings.
@@ -87,10 +81,8 @@ fn main() {
         .whitelist_var("^k.*")
         .blacklist_item("kPolyBlockNames");
 
-    if let Some(clang_extra_include) = &clang_extra_include {
-        for inc in clang_extra_include {
-            public_types_bindings = public_types_bindings.clang_arg(format!("-I{}", *inc));
-        }
+    for inc in &clang_extra_include {
+        public_types_bindings = public_types_bindings.clang_arg(format!("-I{}", *inc));
     }
 
     let public_types_bindings = public_types_bindings
