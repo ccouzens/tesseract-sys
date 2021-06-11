@@ -45,7 +45,7 @@ fn find_tesseract_system_lib() -> Option<Vec<String>> {
 }
 
 #[cfg(all(not(windows), not(target_os="macos")))]
-fn find_tesseract_system_lib() -> Option<String> {
+fn find_tesseract_system_lib() -> Option<Vec<String>> {
     println!("cargo:rustc-link-lib=tesseract");
     None
 }
