@@ -11,10 +11,11 @@ use vcpkg;
 fn find_tesseract_system_lib() -> Vec<String> {
     let lib = vcpkg::Config::new().find_package("tesseract").unwrap();
 
-    lib.include_paths
+    vec![lib
+        .include_paths
         .iter()
         .map(|x| x.to_string_lossy())
-        .collect::<Vec<String>>()
+        .collect::<String>()]
 }
 
 // On macOS, we sometimes need additional search paths, which we get using pkg-config
