@@ -18,8 +18,11 @@ fn find_tesseract_system_lib() -> Vec<String> {
         .collect::<String>()]
 }
 
-// On macOS, we sometimes need additional search paths, which we get using pkg-config
-#[cfg(target_os = "macos")]
+// we sometimes need additional search paths, which we get using pkg-config
+// we can use tesseract installed anywhere on Linux.
+// if you change install path(--prefix) to `configure` script.
+// set `export PKG_CONFIG_PATH=/path-to-lib/pkgconfig` before.
+#[cfg(any(target_os = "macos", target_os = "linux"))]
 fn find_tesseract_system_lib() -> Vec<String> {
     let pk = pkg_config::Config::new().probe("tesseract").unwrap();
     // Tell cargo to tell rustc to link the system proj shared library.
@@ -40,7 +43,7 @@ fn find_tesseract_system_lib() -> Vec<String> {
         .collect::<Vec<String>>()
 }
 
-#[cfg(all(not(windows), not(target_os = "macos")))]
+#[cfg(all(not(windows), not(target_os = "macos"), not(target_os = "linux")))]
 fn find_tesseract_system_lib() -> Vec<String> {
     println!("cargo:rustc-link-lib=tesseract");
     vec![]
