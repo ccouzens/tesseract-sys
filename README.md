@@ -61,3 +61,13 @@ To run the tests please download the [English trained data](https://github.com/t
 ```cmd
 SET TESSDATA_PREFIX=.
 ```
+
+If you prefer to compile tesseract yourself (Because, for example, you could not get vcpkg to build using clang-cl.exe), you can set these environment variables: `TESSERACT_INCLUDE_PATHS`, `TESSERACT_LINK_PATHS` and `TESSERACT_LINK_LIBS`.
+
+For example:
+
+```
+set TESSERACT_INCLUDE_PATHS=D:\tesseract\build\include
+set TESSERACT_LINK_PATHS=D:\tesseract\build\lib
+set TESSERACT_LINK_LIBS=tesseract41
+```
