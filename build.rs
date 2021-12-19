@@ -9,13 +9,41 @@ use vcpkg;
 
 #[cfg(windows)]
 fn find_tesseract_system_lib() -> Vec<String> {
-    let lib = vcpkg::Config::new().find_package("tesseract").unwrap();
+    println!("cargo:rerun-if-env-changed=TESSERACT_INCLUDE_PATHS");
+    println!("cargo:rerun-if-env-changed=TESSERACT_LINK_PATHS");
+    println!("cargo:rerun-if-env-changed=TESSERACT_LINK_LIBS");
 
-    vec![lib
-        .include_paths
-        .iter()
-        .map(|x| x.to_string_lossy())
-        .collect::<String>()]
+    let vcpkg = || {
+        let lib = vcpkg::Config::new().find_package("tesseract").unwrap();
+
+        vec![lib
+            .include_paths
+            .iter()
+            .map(|x| x.to_string_lossy())
+            .collect::<String>()]
+    };
+
+    let include_paths = env::var("TESSERACT_INCLUDE_PATHS").ok();
+    let include_paths = include_paths.as_deref().map(|x| x.split(','));
+    let link_paths = env::var("TESSERACT_LINK_PATHS").ok();
+    let link_paths = link_paths.as_deref().map(|x| x.split(','));
+    let link_libs = env::var("TESSERACT_LINK_LIBS").ok();
+    let link_libs = link_libs.as_deref().map(|x| x.split(','));
+    if let (Some(include_paths), Some(link_paths), Some(link_libs)) =
+        (include_paths, link_paths, link_libs)
+    {
+        for link_path in link_paths {
+            println!("cargo:rustc-link-search={}", link_path)
+        }
+
+        for link_lib in link_libs {
+            println!("cargo:rustc-link-lib={}", link_lib)
+        }
+
+        include_paths.map(|x| x.to_string()).collect::<Vec<_>>()
+    } else {
+        vcpkg()
+    }
 }
 
 // we sometimes need additional search paths, which we get using pkg-config
