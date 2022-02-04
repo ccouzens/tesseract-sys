@@ -3,6 +3,7 @@ extern crate bindgen;
 #[cfg(target_os = "macos")]
 use pkg_config;
 use std::env;
+use std::fs;
 use std::path::PathBuf;
 #[cfg(windows)]
 use vcpkg;
@@ -111,7 +112,9 @@ fn main() {
     let mut public_types_bindings = bindgen::Builder::default()
         .header("wrapper_public_types.hpp")
         .whitelist_var("^k.*")
-        .blacklist_item("kPolyBlockNames");
+        .whitelist_var("^tesseract::k.*")
+        .blacklist_item("^kPolyBlockNames")
+        .blacklist_item("^tesseract::kPolyBlockNames");
 
     for inc in &clang_extra_include {
         public_types_bindings = public_types_bindings.clang_arg(format!("-I{}", *inc));
@@ -126,7 +129,11 @@ fn main() {
     capi_bindings
         .write_to_file(out_path.join("capi_bindings.rs"))
         .expect("Couldn't write capi bindings!");
-    public_types_bindings
-        .write_to_file(out_path.join("public_types_bindings.rs"))
-        .expect("Couldn't write public types bindings!");
+    fs::write(
+        out_path.join("public_types_bindings.rs"),
+        public_types_bindings
+            .to_string()
+            .replace("tesseract_k", "k"),
+    )
+    .expect("Couldn't write public types bindings!");
 }
