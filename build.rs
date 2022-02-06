@@ -1,7 +1,5 @@
 extern crate bindgen;
 
-#[cfg(target_os = "macos")]
-use pkg_config;
 use std::env;
 use std::fs;
 use std::path::PathBuf;
@@ -99,6 +97,7 @@ fn capi_bindings(clang_extra_include: &[String]) -> bindgen::Bindings {
         .expect("Unable to generate capi bindings")
 }
 
+#[cfg(not(target_os = "macos"))]
 fn public_types_bindings(clang_extra_include: &[String]) -> String {
     let mut public_types_bindings = bindgen::Builder::default()
         .header("wrapper_public_types.hpp")
@@ -116,6 +115,14 @@ fn public_types_bindings(clang_extra_include: &[String]) -> String {
         .expect("Unable to generate public types bindings")
         .to_string()
         .replace("tesseract_k", "k")
+}
+
+// MacOS clang is incompatible with Bindgen and constexpr
+// https://github.com/rust-lang/rust-bindgen/issues/1948
+// Hardcode the constants rather than reading them dynamically
+#[cfg(target_os = "macos")]
+fn public_types_bindings(_clang_extra_include: &[String]) -> &'static str {
+    include_str!("src/public_types_bindings_mac.rs")
 }
 
 fn main() {
