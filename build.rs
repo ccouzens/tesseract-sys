@@ -78,17 +78,8 @@ fn find_tesseract_system_lib() -> Vec<String> {
     vec![]
 }
 
-fn main() {
-    // Tell cargo to tell rustc to link the system tesseract
-    // and leptonica shared libraries.
-    let clang_extra_include = find_tesseract_system_lib();
-
-    // The bindgen::Builder is the main entry point
-    // to bindgen, and lets you build up options for
-    // the resulting bindings.
+fn capi_bindings(clang_extra_include: &[String]) -> bindgen::Bindings {
     let mut capi_bindings = bindgen::Builder::default()
-        // The input header we would like to generate
-        // bindings for.
         .header("wrapper_capi.h")
         .whitelist_function("^Tess.*")
         .blacklist_type("Boxa")
@@ -99,16 +90,16 @@ fn main() {
         .blacklist_type("_IO_marker")
         .blacklist_type("_IO_wide_data");
 
-    for inc in &clang_extra_include {
+    for inc in clang_extra_include {
         capi_bindings = capi_bindings.clang_arg(format!("-I{}", *inc));
     }
 
-    // Finish the builder and generate the bindings.
-    let capi_bindings = capi_bindings
+    capi_bindings
         .generate()
-        // Unwrap the Result and panic on failure.
-        .expect("Unable to generate capi bindings");
+        .expect("Unable to generate capi bindings")
+}
 
+fn public_types_bindings(clang_extra_include: &[String]) -> String {
     let mut public_types_bindings = bindgen::Builder::default()
         .header("wrapper_public_types.hpp")
         .whitelist_var("^k.*")
@@ -116,24 +107,30 @@ fn main() {
         .blacklist_item("^kPolyBlockNames")
         .blacklist_item("^tesseract::kPolyBlockNames");
 
-    for inc in &clang_extra_include {
+    for inc in clang_extra_include {
         public_types_bindings = public_types_bindings.clang_arg(format!("-I{}", *inc));
     }
 
-    let public_types_bindings = public_types_bindings
+    public_types_bindings
         .generate()
-        .expect("Unable to generate public types bindings");
+        .expect("Unable to generate public types bindings")
+        .to_string()
+        .replace("tesseract_k", "k")
+}
+
+fn main() {
+    // Tell cargo to tell rustc to link the system tesseract
+    // and leptonica shared libraries.
+    let clang_extra_include = find_tesseract_system_lib();
 
     // Write the bindings to the $OUT_DIR/bindings.rs file.
     let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
-    capi_bindings
+    capi_bindings(&clang_extra_include)
         .write_to_file(out_path.join("capi_bindings.rs"))
         .expect("Couldn't write capi bindings!");
     fs::write(
         out_path.join("public_types_bindings.rs"),
-        public_types_bindings
-            .to_string()
-            .replace("tesseract_k", "k"),
+        public_types_bindings(&clang_extra_include),
     )
     .expect("Couldn't write public types bindings!");
 }
