@@ -15,7 +15,7 @@ build = "build.rs"
 leptonica-sys = "~0.4"
 
 [build-dependencies]
-bindgen = "0.56"
+bindgen = "0.60"
 [target.'cfg(windows)'.build-dependencies]
 vcpkg = "0.2.8"
 [target.'cfg(any(target_os="macos", target_os="linux"))'.build-dependencies]

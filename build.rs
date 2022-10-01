@@ -79,14 +79,14 @@ fn find_tesseract_system_lib() -> Vec<String> {
 fn capi_bindings(clang_extra_include: &[String]) -> bindgen::Bindings {
     let mut capi_bindings = bindgen::Builder::default()
         .header("wrapper_capi.h")
-        .whitelist_function("^Tess.*")
-        .blacklist_type("Boxa")
-        .blacklist_type("Pix")
-        .blacklist_type("Pixa")
-        .blacklist_type("_IO_FILE")
-        .blacklist_type("_IO_codecvt")
-        .blacklist_type("_IO_marker")
-        .blacklist_type("_IO_wide_data");
+        .allowlist_function("^Tess.*")
+        .blocklist_type("Boxa")
+        .blocklist_type("Pix")
+        .blocklist_type("Pixa")
+        .blocklist_type("_IO_FILE")
+        .blocklist_type("_IO_codecvt")
+        .blocklist_type("_IO_marker")
+        .blocklist_type("_IO_wide_data");
 
     for inc in clang_extra_include {
         capi_bindings = capi_bindings.clang_arg(format!("-I{}", *inc));
@@ -101,10 +101,10 @@ fn capi_bindings(clang_extra_include: &[String]) -> bindgen::Bindings {
 fn public_types_bindings(clang_extra_include: &[String]) -> String {
     let mut public_types_bindings = bindgen::Builder::default()
         .header("wrapper_public_types.hpp")
-        .whitelist_var("^k.*")
-        .whitelist_var("^tesseract::k.*")
-        .blacklist_item("^kPolyBlockNames")
-        .blacklist_item("^tesseract::kPolyBlockNames");
+        .allowlist_var("^k.*")
+        .allowlist_var("^tesseract::k.*")
+        .blocklist_item("^kPolyBlockNames")
+        .blocklist_item("^tesseract::kPolyBlockNames");
 
     for inc in clang_extra_include {
         public_types_bindings = public_types_bindings.clang_arg(format!("-I{}", *inc));
