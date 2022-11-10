@@ -1,6 +1,6 @@
 # tesseract-sys
 
-Rust bindings for [Tesseract](https://github.com/tesseract-ocr/tesseract)
+Rust bindings for [Tesseract](https://github.com/tesseract-ocr/tesseract). Requires version `4.1.0` or newer.
 
 ## Building
 

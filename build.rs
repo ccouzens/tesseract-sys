@@ -51,7 +51,10 @@ fn find_tesseract_system_lib() -> Vec<String> {
 // set `export PKG_CONFIG_PATH=/path-to-lib/pkgconfig` before.
 #[cfg(any(target_os = "macos", target_os = "linux"))]
 fn find_tesseract_system_lib() -> Vec<String> {
-    let pk = pkg_config::Config::new().probe("tesseract").unwrap();
+    let pk = pkg_config::Config::new()
+        .atleast_version("4.1")
+        .probe("tesseract")
+        .unwrap();
     // Tell cargo to tell rustc to link the system proj shared library.
     println!("cargo:rustc-link-search=native={:?}", pk.link_paths[0]);
     println!("cargo:rustc-link-lib=tesseract");
