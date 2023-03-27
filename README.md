@@ -2,6 +2,11 @@
 
 Rust bindings for [Tesseract](https://github.com/tesseract-ocr/tesseract). Requires version `4.1.0` or newer.
 
+
+## Help wanted
+
+[Windows and Mac maintainers wanted](https://github.com/ccouzens/tesseract-sys/issues/22).
+
 ## Building
 
 This links to the C libraries [leptonica](https://github.com/danbloomberg/leptonica) and tesseract.
