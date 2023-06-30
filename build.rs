@@ -104,8 +104,8 @@ fn capi_bindings(clang_extra_include: &[String]) -> bindgen::Bindings {
 fn public_types_bindings(clang_extra_include: &[String]) -> String {
     let mut public_types_bindings = bindgen::Builder::default()
         .header("wrapper_public_types.hpp")
-        .allowlist_var("^k.*")
-        .allowlist_var("^tesseract::k.*")
+        .rustified_enum("tesseract::PageIteratorLevel")
+        .rustified_enum("tesseract::PolyBlockType")
         .blocklist_item("^kPolyBlockNames")
         .blocklist_item("^tesseract::kPolyBlockNames");
 
@@ -117,7 +117,7 @@ fn public_types_bindings(clang_extra_include: &[String]) -> String {
         .generate()
         .expect("Unable to generate public types bindings")
         .to_string()
-        .replace("tesseract_k", "k")
+        .replace("tesseract_", "")
 }
 
 // MacOS clang is incompatible with Bindgen and constexpr
