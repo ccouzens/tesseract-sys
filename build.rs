@@ -104,8 +104,14 @@ fn capi_bindings(clang_extra_include: &[String]) -> bindgen::Bindings {
 fn public_types_bindings(clang_extra_include: &[String]) -> String {
     let mut public_types_bindings = bindgen::Builder::default()
         .header("wrapper_public_types.hpp")
+        .rustified_enum("tesseract::OcrEngineMode")
+        .rustified_enum("tesseract::Orientation")
         .rustified_enum("tesseract::PageIteratorLevel")
+        .rustified_enum("tesseract::PageSegMode")
+        .rustified_enum("tesseract::ParagraphJustification")
         .rustified_enum("tesseract::PolyBlockType")
+        .rustified_enum("tesseract::TextlineOrder")
+        .rustified_enum("tesseract::WritingDirection")
         .blocklist_item("^kPolyBlockNames")
         .blocklist_item("^tesseract::kPolyBlockNames");
 
