@@ -18,5 +18,5 @@ leptonica-sys = "~0.4"
 bindgen = "0.64"
 [target.'cfg(windows)'.build-dependencies]
 vcpkg = "0.2.8"
-[target.'cfg(any(target_os="macos", target_os="linux"))'.build-dependencies]
+[target.'cfg(any(target_os="macos", target_os="linux", target_os="freebsd"))'.build-dependencies]
 pkg-config = "0.3.19"
