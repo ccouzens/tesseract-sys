@@ -140,6 +140,11 @@ fn public_types_bindings(_clang_extra_include: &[String]) -> &'static str {
 }
 
 fn main() {
+    #[cfg(target_os = "windows")]
+    println!("cargo:rustc-link-lib=User32");
+    #[cfg(target_os = "windows")]
+    println!("cargo:rustc-link-lib=Crypt32");
+
     // Tell cargo to tell rustc to link the system tesseract
     // and leptonica shared libraries.
     let clang_extra_include = find_tesseract_system_lib();
