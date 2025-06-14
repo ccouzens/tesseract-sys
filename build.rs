@@ -144,6 +144,8 @@ fn main() {
     println!("cargo:rustc-link-lib=User32");
     #[cfg(target_os = "windows")]
     println!("cargo:rustc-link-lib=Crypt32");
+    #[cfg(target_os = "windows")]
+    println!("cargo:rustc-link-lib=Advapi32");
 
     // Tell cargo to tell rustc to link the system tesseract
     // and leptonica shared libraries.
